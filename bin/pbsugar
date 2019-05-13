@@ -21,26 +21,26 @@ my ($option, $verify, $no_solve);
 my ($java_opt1, $java_opt2, $keep, $prof);
 my ($pb_file, $map_file, $sat_file, $out_file);
 &GetOptions(
-	    'version' => \$showversion,
-	    'h|help' => \$help,
-	    'debug=i' => \$debug,
-	    'v|verbose' => \$verbose,
-	    'vv|veryverbose' => \$veryverbose,
-	    'o|option=s' => \$option,
-	    'verify=s' => \$verify,
-	    'n|no_solve' => \$no_solve,
-	    'tmp=s' => \$tmp,
-	    'map=s' => \$map_file,
-	    'sat=s' => \$sat_file,
-	    'out=s' => \$out_file,
-	    'jar=s' => \$jar,
-	    'java=s' => \$java,
-	    'jopt1=s' => \$java_opt1,
-	    'jopt2=s' => \$java_opt2,
-	    'prof=s' => \$prof,
-	    'solver=s' => \$solver,
-	    'keep' => \$keep,
-	    );
+            'version' => \$showversion,
+            'h|help' => \$help,
+            'debug=i' => \$debug,
+            'v|verbose' => \$verbose,
+            'vv|veryverbose' => \$veryverbose,
+            'o|option=s' => \$option,
+            'verify=s' => \$verify,
+            'n|no_solve' => \$no_solve,
+            'tmp=s' => \$tmp,
+            'map=s' => \$map_file,
+            'sat=s' => \$sat_file,
+            'out=s' => \$out_file,
+            'jar=s' => \$jar,
+            'java=s' => \$java,
+            'jopt1=s' => \$java_opt1,
+            'jopt2=s' => \$java_opt2,
+            'prof=s' => \$prof,
+            'solver=s' => \$solver,
+            'keep' => \$keep,
+            );
 $verbose = $verbose || $veryverbose;
 if (! $java_opt1) {
     $java_opt1 = "-Xmx2000M";
@@ -93,57 +93,57 @@ sub usage {
 sub setup {
     my ($in) = @_;
     if (! -e $in) {
-	die "$0: no input file $in";
+        die "$0: no input file $in";
     }
     if ($in =~ /\.gz$/ || $in =~ /\.bz2$/) {
-	$in_file = $in;
+        $in_file = $in;
     } else {
-	$pb_file = $in;
+        $pb_file = $in;
     }
     if (! $pb_file) {
-	$pb_file = "$tmp.opb";
-	push(@tmp, $pb_file);
+        $pb_file = "$tmp.opb";
+        push(@tmp, $pb_file);
     }
     if (! $map_file) {
-	$map_file = "$tmp.map";
-	push(@tmp, $map_file);
+        $map_file = "$tmp.map";
+        push(@tmp, $map_file);
     }
     if (! $sat_file) {
-	$sat_file = "$tmp.cnf";
-	push(@tmp, $sat_file);
+        $sat_file = "$tmp.cnf";
+        push(@tmp, $sat_file);
     }
     if (! $out_file) {
-	$out_file = "$tmp.out";
-	push(@tmp, $out_file);
+        $out_file = "$tmp.out";
+        push(@tmp, $out_file);
     }
 }
 
 sub log {
     $_ = join(" ", @_);
     if (/ERROR/i || $verbose) {
-	my $time = time - $time0;
-	print "c $time\t", $_, "\n";
+        my $time = time - $time0;
+        print "c $time\t", $_, "\n";
     }
 }
 
 sub print {
     $_ = join(" ", @_);
     if (/^c (.*)$/) {
-	$_ = $1;
-	if (/ERROR/i || $veryverbose) {
-	    &log($_);
-	}
+        $_ = $1;
+        if (/ERROR/i || $veryverbose) {
+            &log($_);
+        }
     } elsif (/^s (.*)$/) {
-	if ($1 ne "UNKNOWN") {
-	    $result = $1;
-	    print $_, "\n";
-	}
+        if ($1 ne "UNKNOWN") {
+            $result = $1;
+            print $_, "\n";
+        }
     } elsif (/^o (.*)$/) {
-	# TODO for objectives
+        # TODO for objectives
     } elsif (/^\w\b/) {
-	print $_, "\n";
+        print $_, "\n";
     } else {
-	&log($_);
+        &log($_);
     }
 }
 
@@ -163,26 +163,26 @@ sub handler {
     $SIG{'INT'} = 'DEFAULT';
     $SIG{'TERM'} = 'DEFAULT';
     if ($java_pid) {
-	kill(2, $java_pid);
-	$java_pid = undef;
-	while (<JAVA>) {
-	    chomp;
-	    if ($verbose) {
-		&print($_);
-	    }
-	}
-	close(JAVA);
+        kill(2, $java_pid);
+        $java_pid = undef;
+        while (<JAVA>) {
+            chomp;
+            if ($verbose) {
+                &print($_);
+            }
+        }
+        close(JAVA);
     }
     if ($solver_pid) {
-	kill(2, $solver_pid);
-	while (<SOLVER>) {
-	    chomp;
-	    if ($verbose) {
-		&print($_);
-	    }
-	}
-	close(SOLVER);
-	$solver_pid = undef;
+        kill(2, $solver_pid);
+        while (<SOLVER>) {
+            chomp;
+            if ($verbose) {
+                &print($_);
+            }
+        }
+        close(SOLVER);
+        $solver_pid = undef;
     }
     die;
 }
@@ -191,29 +191,29 @@ sub java {
     my ($opt, $class, $args, $prof) = @_;
     my $cmd = "$java $opt";
     if ($prof) {
-	$cmd .= " -agentlib:hprof=cpu=samples,depth=8,file=$prof";
+        $cmd .= " -agentlib:hprof=cpu=samples,depth=8,file=$prof";
     }
     $cmd .= " -cp '$jar' $class";
     if ($verbose) {
-	$cmd .= " -v";
+        $cmd .= " -v";
     }
     if ($veryverbose) {
-	$cmd .= " -v";
+        $cmd .= " -v";
     }
     if ($option) {
-	$cmd .= " -option $option";
+        $cmd .= " -option $option";
     }
     if ($debug) {
-	$cmd .= " -debug $debug";
+        $cmd .= " -debug $debug";
     }
     $cmd .= " $args";
     if ($veryverbose) {
-	&log("CMD $cmd");
+        &log("CMD $cmd");
     }
     $java_pid = open(JAVA, "$cmd 2>&1 |") || die;
     while (<JAVA>) {
-	chomp;
-	&print($_);
+        chomp;
+        &print($_);
     }
     close(JAVA);
     $java_pid = undef;
@@ -228,53 +228,53 @@ sub main {
     $SIG{'INT'} = \&handler;
     $SIG{'TERM'} = \&handler;
     eval {
-	$result = "";
-	&log("PBSugar $version + $solver");
-	&log("BEGIN", scalar(localtime));
-	if ($veryverbose) {
-	    &log("PID", $$);
-	    chomp($_ = `hostname`);
-	    &log("HOST", $_);
-	}
-	if ($in_file) {
-	    &log("DECOMPRESSING $in_file TO $pb_file");
-	    if ($in_file =~ /\.gz$/) {
-		system("zcat $in_file >$pb_file");
-	    } elsif ($in_file =~ /\.bz2$/) {
-		system("bzcat $in_file >$pb_file");
-	    }
-	}
-	if (! -e $pb_file) {
-	    &error("$pb_file not found");
-	} elsif ($verify) {
-	    $result = &verify($pb_file, $verify);
-	} else {
-	    &encode($pb_file, $sat_file, $map_file);
-	    if ($no_solve) {
-		$result = "DONE";
-	    } elsif (! $result) {
-		&solve($sat_file, $out_file, $map_file);
-	    }
-	}
+        $result = "";
+        &log("PBSugar $version + $solver");
+        &log("BEGIN", scalar(localtime));
+        if ($veryverbose) {
+            &log("PID", $$);
+            chomp($_ = `hostname`);
+            &log("HOST", $_);
+        }
+        if ($in_file) {
+            &log("DECOMPRESSING $in_file TO $pb_file");
+            if ($in_file =~ /\.gz$/) {
+                system("zcat $in_file >$pb_file");
+            } elsif ($in_file =~ /\.bz2$/) {
+                system("bzcat $in_file >$pb_file");
+            }
+        }
+        if (! -e $pb_file) {
+            &error("$pb_file not found");
+        } elsif ($verify) {
+            $result = &verify($pb_file, $verify);
+        } else {
+            &encode($pb_file, $sat_file, $map_file);
+            if ($no_solve) {
+                $result = "DONE";
+            } elsif (! $result) {
+                &solve($sat_file, $out_file, $map_file);
+            }
+        }
     };
     $SIG{'INT'} = \&handler;
     $SIG{'TERM'} = \&handler;
     eval {
-	if (! $result) {
-	    &print("s UNKNOWN");
-	}
-	wait;
-	my @t = times;
-#	my $cpu = $t[0] + $t[2];
-	my $cpu = $t[0] + $t[1] + $t[2] + $t[3];
-	$_ = "(" . join(" ", @t) . ")";
-	&log("CPU", $cpu, $_);
-	&log("END", scalar(localtime));
-	if (! $keep) {
-	    foreach my $file (@tmp) {
-		unlink $file;
-	    }
-	}
+        if (! $result) {
+            &print("s UNKNOWN");
+        }
+        wait;
+        my @t = times;
+#        my $cpu = $t[0] + $t[2];
+        my $cpu = $t[0] + $t[1] + $t[2] + $t[3];
+        $_ = "(" . join(" ", @t) . ")";
+        &log("CPU", $cpu, $_);
+        &log("END", scalar(localtime));
+        if (! $keep) {
+            foreach my $file (@tmp) {
+                unlink $file;
+            }
+        }
     };
 }
 
@@ -283,12 +283,12 @@ sub verify {
     my @t0 = times;
     &log("VERIFYING $pb_file WITH $log_file");
     if (! -e $pb_file) {
-	&error("no PB file $pb_file");
+        &error("no PB file $pb_file");
     } else {
-	my $class = "pbsugar.PBSugar";
-	my $arg = "";
-	$arg .= "-verify '$pb_file' '$log_file'";
-	&java($java_opt1, $class, $arg, $prof);
+        my $class = "pbsugar.PBSugar";
+        my $arg = "";
+        $arg .= "-verify '$pb_file' '$log_file'";
+        &java($java_opt1, $class, $arg, $prof);
     }
     my @t = times;
     @t = ($t[0]-$t0[0], $t[1]-$t0[1], $t[2]-$t0[2], $t[3]-$t0[3]);
@@ -302,12 +302,12 @@ sub encode {
     my @t0 = times;
     &log("ENCODING $pb_file TO $sat_file");
     if (! -e $pb_file) {
-	&error("no PB file $pb_file");
+        &error("no PB file $pb_file");
     } else {
-	my $class = "pbsugar.PBSugar";
-	my $arg = "";
-	$arg .= "-encode '$pb_file' '$sat_file' '$map_file'";
-	&java($java_opt1, $class, $arg, $prof);
+        my $class = "pbsugar.PBSugar";
+        my $arg = "";
+        $arg .= "-encode '$pb_file' '$sat_file' '$map_file'";
+        &java($java_opt1, $class, $arg, $prof);
     }
     my @t = times;
     @t = ($t[0]-$t0[0], $t[1]-$t0[1], $t[2]-$t0[2], $t[3]-$t0[3]);
@@ -321,12 +321,12 @@ sub decode {
     my @t0 = times;
     &log("DECODING $out_file WITH $map_file");
     if (! -e $out_file || -z $out_file) {
-	&error("no output file $out_file");
-	return;
+        &error("no output file $out_file");
+        return;
     }
     if (! -e $map_file) {
-	&error("no map file $map_file");
-	return;
+        &error("no map file $map_file");
+        return;
     }
     my $class = "pbsugar.PBSugar";
     my $arg = "";
@@ -344,8 +344,8 @@ sub solve {
     my @t0 = times;
     &log("SOLVING $sat_file WITH $map_file");
     if (! -e $sat_file) {
-	&error("no SAT file $sat_file");
-	return;
+        &error("no SAT file $sat_file");
+        return;
     }
     &find($sat_file, $out_file, $map_file);
     my @t = times;
@@ -365,48 +365,48 @@ sub sat {
     my ($sat_file, $out_file) = @_;
     &log("SAT SOLVING $sat_file");
     if (! -e $sat_file) {
-	&error("no SAT file $sat_file");
-	return;
+        &error("no SAT file $sat_file");
+        return;
     }
     unlink $out_file;
     my $cmd = "$solver '$sat_file'";
     if ($solver =~ /\b(minisat|glueminisat|sucrose)/) {
-	$cmd = "$solver '$sat_file' '$out_file'";
-	$out_file = undef;
+        $cmd = "$solver '$sat_file' '$out_file'";
+        $out_file = undef;
     } elsif ($solver =~ /\b(picosat|precosat)/) {
-	my $opt = $veryverbose ? "-v" : "";
-	$cmd = "$solver $opt '$sat_file'";
+        my $opt = $veryverbose ? "-v" : "";
+        $cmd = "$solver $opt '$sat_file'";
     } elsif ($solver =~ /\b(lingeling|plingeling)/) {
-	my $opt = $veryverbose ? "-v" : "";
-	$cmd = "$solver $opt '$sat_file'";
+        my $opt = $veryverbose ? "-v" : "";
+        $cmd = "$solver $opt '$sat_file'";
     } elsif ($solver =~ /\b(clasp)/) {
-	my $opt = $veryverbose ? "--stats" : "";
-	$cmd = "$solver $opt '$sat_file'";
+        my $opt = $veryverbose ? "--stats" : "";
+        $cmd = "$solver $opt '$sat_file'";
     } elsif ($solver =~ /\b(rsat)/) {
-	$cmd = "$solver '$sat_file' -r '$out_file'";
-	$out_file = undef;
+        $cmd = "$solver '$sat_file' -r '$out_file'";
+        $out_file = undef;
     }
     if ($veryverbose) {
-	&log("CMD $cmd");
+        &log("CMD $cmd");
     }
     $solver_pid = open(SOLVER, "$cmd 2>&1 |") || die;
     if ($out_file) {
-	open(OUT, ">$out_file") || die;
-	while (<SOLVER>) {
-	    chomp;
-	    print OUT "$_\n";
-	    if ($veryverbose && ! /^v/) {
-		&log($_);
-	    }
-	}
-	close(OUT);
+        open(OUT, ">$out_file") || die;
+        while (<SOLVER>) {
+            chomp;
+            print OUT "$_\n";
+            if ($veryverbose && ! /^v/) {
+                &log($_);
+            }
+        }
+        close(OUT);
     } else {
-	while (<SOLVER>) {
-	    chomp;
-	    if ($veryverbose && ! /^v/) {
-		&log($_);
-	    }
-	}
+        while (<SOLVER>) {
+            chomp;
+            if ($veryverbose && ! /^v/) {
+                &log($_);
+            }
+        }
     }
     close(SOLVER);
     $solver_pid = undef;
